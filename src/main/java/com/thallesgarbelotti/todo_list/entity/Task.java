@@ -2,9 +2,6 @@ package com.thallesgarbelotti.todo_list.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.boot.context.properties.bind.DefaultValue;
-
-import java.lang.reflect.Constructor;
 
 @Entity
 @Table(name="tasks")
@@ -14,12 +11,16 @@ public class Task {
     protected Long id;
 
     @NotBlank
-    protected String description;
-    protected boolean finished = false;
+    private String description;
+    private boolean finished = false;
 
-    public Long getId() {
-        return id;
+    public Task(String description) {
+        this.description = description;
     }
+
+    public Task() {}
+
+    public Long getId() { return id; }
 
     public void setId(Long id) {
         this.id = id;

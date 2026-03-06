@@ -1,25 +1,20 @@
 package com.thallesgarbelotti.todo_list.controller;
-import com.thallesgarbelotti.todo_list.repository.TaskRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 import com.thallesgarbelotti.todo_list.entity.Task;
 import com.thallesgarbelotti.todo_list.service.TaskService;
 import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
-    private final TaskRepository taskRepository;
-    TaskService service;
+    private final TaskService service;
 
-    public TaskController(TaskService taskService, TaskRepository taskRepository) {
+    public TaskController(TaskService taskService) {
         this.service = taskService;
-        this.taskRepository = taskRepository;
     }
 
     @PostMapping
