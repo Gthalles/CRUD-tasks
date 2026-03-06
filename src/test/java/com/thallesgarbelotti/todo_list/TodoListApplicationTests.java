@@ -1,14 +1,13 @@
 package com.thallesgarbelotti.todo_list;
 
-import com.thallesgarbelotti.todo_list.repository.TaskRepository;
-import com.thallesgarbelotti.todo_list.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import com.thallesgarbelotti.todo_list.entity.Task;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.thallesgarbelotti.todo_list.repository.TaskRepository;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
 
@@ -112,5 +111,55 @@ class TodoListApplicationTests {
 				.expectBody()
 				.jsonPath("$").isArray()
 				.jsonPath("$.length()").isEqualTo(0);
+	}
+
+	@Test
+	void updateTasksWhenInputIsValidAndTaskExistShouldReturnTaskAndOk() {
+		var task = new Task();
+		task.setDescription("created task");
+
+		var savedTask = repository.save(task);
+		savedTask.setDescription("Updated description");
+
+		webTestClient
+				.patch()
+				.uri("/tasks/{id}", savedTask.getId())
+				.bodyValue(savedTask)
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody()
+				.jsonPath("$.id").isEqualTo(savedTask.getId())
+				.jsonPath("$.description").isEqualTo(savedTask.getDescription())
+				.jsonPath("$.finished").isEqualTo(savedTask.isFinished());
+	}
+
+	@Test
+	void updateTasksWhenInputIsInvalidShouldReturnBadRequest() {
+		var task = new Task();
+		task.setDescription("task");
+		var savedTask = this.repository.save(task);
+
+		var blankTask = new Task();
+		blankTask.setDescription("");
+
+		webTestClient
+				.patch()
+				.uri("/tasks/{id}", savedTask.getId())
+				.bodyValue(blankTask)
+				.exchange()
+				.expectStatus().isBadRequest();
+	}
+
+	@Test
+	void updateTasksWhenInputIsValidAndTaskNotExistShouldReturnNotFound() {
+		var task = new Task();
+		task.setDescription("Description");
+
+		webTestClient
+				.patch()
+				.uri("/tasks/{id}", 999)
+				.bodyValue(task)
+				.exchange()
+				.expectStatus().isNotFound();
 	}
 }

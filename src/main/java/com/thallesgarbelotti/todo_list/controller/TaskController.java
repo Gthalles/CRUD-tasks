@@ -1,6 +1,8 @@
 package com.thallesgarbelotti.todo_list.controller;
+import com.thallesgarbelotti.todo_list.repository.TaskRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 import com.thallesgarbelotti.todo_list.entity.Task;
 import com.thallesgarbelotti.todo_list.service.TaskService;
@@ -12,10 +14,12 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
+    private final TaskRepository taskRepository;
     TaskService service;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, TaskRepository taskRepository) {
         this.service = taskService;
+        this.taskRepository = taskRepository;
     }
 
     @PostMapping
@@ -41,8 +45,13 @@ public class TaskController {
     }
 
     @PatchMapping("{id}")
-    Task update(@PathVariable Long id, @RequestBody Task updatedTask) {
-        return this.service.update(id, updatedTask);
+    ResponseEntity<Task> update(@PathVariable Long id, @RequestBody @Valid Task updatedTask) {
+        try {
+            var savedTask = this.service.update(id, updatedTask);
+            return ResponseEntity.ok(savedTask);
+        } catch (NoSuchElementException err) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("{id}")
