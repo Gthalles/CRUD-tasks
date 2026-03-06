@@ -4,16 +4,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.lang.reflect.Constructor;
+
 @Entity
 @Table(name="tasks")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @NotBlank
-    private String description;
-    private boolean finished = false;
+    protected String description;
+    protected boolean finished = false;
 
     public Long getId() {
         return id;

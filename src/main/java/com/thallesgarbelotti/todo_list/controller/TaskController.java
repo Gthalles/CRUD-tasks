@@ -1,10 +1,13 @@
 package com.thallesgarbelotti.todo_list.controller;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.thallesgarbelotti.todo_list.entity.Task;
 import com.thallesgarbelotti.todo_list.service.TaskService;
 import org.springframework.http.HttpStatus;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/tasks")
@@ -22,8 +25,14 @@ public class TaskController {
     }
 
     @GetMapping("{id}")
-    Task getIssue(@PathVariable Long id) {
-        return this.service.listById(id);
+    @ResponseStatus
+    ResponseEntity<Task> listById(@PathVariable Long id) {
+        try {
+            var selectedTask = this.service.listById(id);
+            return ResponseEntity.ok(selectedTask);
+        } catch(NoSuchElementException err) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
