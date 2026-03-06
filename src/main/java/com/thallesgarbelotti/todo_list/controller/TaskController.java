@@ -29,7 +29,6 @@ public class TaskController {
     }
 
     @GetMapping("{id}")
-    @ResponseStatus
     ResponseEntity<Task> listById(@PathVariable Long id) {
         try {
             var selectedTask = this.service.listById(id);
@@ -55,7 +54,16 @@ public class TaskController {
     }
 
     @DeleteMapping("{id}")
-    List<Task> delete(@PathVariable Long id) {
-        return this.service.delete(id);
+    @ResponseStatus
+    ResponseEntity<List<Task>> delete(@PathVariable Long id) {
+        try {
+            var selectedTask = this.service.listById(id);
+            if (selectedTask == null) return ResponseEntity.notFound().build();
+
+           var updatedList = this.service.delete(id);
+           return ResponseEntity.ok(updatedList);
+        } catch (NoSuchElementException err) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

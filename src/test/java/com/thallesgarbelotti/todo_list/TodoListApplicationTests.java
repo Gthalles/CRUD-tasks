@@ -89,7 +89,7 @@ class TodoListApplicationTests {
 		var secondTask = new Task();
 		secondTask.setDescription("second");
 
-		repository.saveAllAndFlush(List.of(firstTask, secondTask));
+		repository.saveAll(List.of(firstTask, secondTask));
 
 		webTestClient
 				.get()
@@ -159,6 +159,36 @@ class TodoListApplicationTests {
 				.patch()
 				.uri("/tasks/{id}", 999)
 				.bodyValue(task)
+				.exchange()
+				.expectStatus().isNotFound();
+	}
+
+	@Test
+	void deleteTasksWhenTaskExistShouldReturnOk() {
+		var task = new Task();
+		task.setDescription("new task");
+
+		var savedTask = this.repository.save(task);
+
+		webTestClient
+				.delete()
+				.uri("/tasks/{id}", savedTask.getId())
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody()
+				.jsonPath("$").isEmpty();
+	}
+
+	@Test
+	void deleteTasksWhenTaskNotExistShouldReturnNotFound() {
+		var task = new Task();
+		task.setDescription("new task");
+
+		this.repository.save(task);
+
+		webTestClient
+				.delete()
+				.uri("/tasks/{id}", 999)
 				.exchange()
 				.expectStatus().isNotFound();
 	}
