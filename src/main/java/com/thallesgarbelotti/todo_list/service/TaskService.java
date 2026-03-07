@@ -41,8 +41,7 @@ public class TaskService {
         return selectedTask;
     }
 
-    public List<Task> delete(Long id) {
+    public void delete(Long id) {
         this.repository.deleteById(id);
-        return this.list();
     }
 }

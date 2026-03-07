@@ -1,4 +1,4 @@
-curl -X POST http://localhost:8080/tasks -H 'Content-Type: application/json' -d '{"description": "Create endpoint GET /issues/:id", "finished": false}'
+curl -X POST http://localhost:8080/tasks -H 'Content-Type: application/json' -d '{"description": "Update documentation", "finished": false}' -v | python3 -m json.tool
 
 curl -X GET http://localhost:8080/tasks -H 'Content-Type: application/json' -v | python3 -m json.tool
 

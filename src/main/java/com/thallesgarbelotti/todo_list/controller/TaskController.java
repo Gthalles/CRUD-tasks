@@ -1,10 +1,10 @@
 package com.thallesgarbelotti.todo_list.controller;
+
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.thallesgarbelotti.todo_list.entity.Task;
 import com.thallesgarbelotti.todo_list.service.TaskService;
-import org.springframework.http.HttpStatus;
 
 import java.net.URI;
 import java.util.List;
@@ -20,7 +20,6 @@ public class TaskController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     ResponseEntity<Task> create(@RequestBody @Valid Task newTask) {
             var savedTask = this.service.create(newTask);
             return ResponseEntity.created(URI.create("/tasks/" + savedTask.getId())).body(savedTask);
@@ -52,14 +51,11 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus
-    ResponseEntity<List<Task>> delete(@PathVariable Long id) {
+    ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
-            var selectedTask = this.service.listById(id);
-            if (selectedTask == null) return ResponseEntity.notFound().build();
-
-           var updatedList = this.service.delete(id);
-           return ResponseEntity.ok(updatedList);
+            this.service.listById(id);
+            this.service.delete(id);
+           return ResponseEntity.noContent().build();
         } catch (NoSuchElementException err) {
             return ResponseEntity.notFound().build();
         }

@@ -168,17 +168,11 @@ class TodoListApplicationTests {
 				.delete()
 				.uri("/tasks/{id}", savedTask.getId())
 				.exchange()
-				.expectStatus().isOk()
-				.expectBody()
-				.jsonPath("$").isEmpty();
+				.expectStatus().isNoContent();
 	}
 
 	@Test
 	void deleteTasksWhenTaskNotExistShouldReturnNotFound() {
-		var task = new Task("new task");
-
-		this.repository.save(task);
-
 		webTestClient
 				.delete()
 				.uri("/tasks/{id}", 999)
