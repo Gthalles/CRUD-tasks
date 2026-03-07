@@ -43,7 +43,10 @@ class TodoListApplicationTests {
 					.bodyValue(task)
 					.exchange()
 					.expectStatus()
-					.isCreated();
+					.isCreated()
+					.expectBody()
+					.jsonPath("$.description").isEqualTo(task.getDescription())
+					.jsonPath("$.finished").isEqualTo(task.isFinished());
 	}
 
 	@Test

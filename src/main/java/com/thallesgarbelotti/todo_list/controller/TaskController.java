@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import com.thallesgarbelotti.todo_list.entity.Task;
 import com.thallesgarbelotti.todo_list.service.TaskService;
 import org.springframework.http.HttpStatus;
+
+import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -19,8 +21,9 @@ public class TaskController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    void create(@RequestBody @Valid Task newTask) {
-        this.service.create(newTask);
+    ResponseEntity<Task> create(@RequestBody @Valid Task newTask) {
+            var savedTask = this.service.create(newTask);
+            return ResponseEntity.created(URI.create("/tasks/" + savedTask.getId())).body(savedTask);
     }
 
     @GetMapping("/{id}")

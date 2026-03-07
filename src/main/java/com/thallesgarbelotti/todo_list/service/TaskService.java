@@ -15,8 +15,8 @@ public class TaskService {
         this.repository = taskRepository;
     }
 
-    public void create(Task task) {
-        this.repository.save(task);
+    public Task create(Task task) {
+        return this.repository.save(task);
     }
 
     public List<Task> list() {
