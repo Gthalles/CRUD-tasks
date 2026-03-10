@@ -1,5 +1,8 @@
 package com.thallesgarbelotti.todo_list.controller;
 
+import com.thallesgarbelotti.todo_list.dto.CreateTaskDTO;
+import com.thallesgarbelotti.todo_list.dto.ResponseTaskDTO;
+import com.thallesgarbelotti.todo_list.dto.UpdateTaskDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,31 +23,65 @@ public class TaskController {
     }
 
     @PostMapping
-    ResponseEntity<Task> create(@RequestBody @Valid Task newTask) {
+    ResponseEntity<ResponseTaskDTO> create(@RequestBody @Valid CreateTaskDTO dto) {
+            var newTask = new Task(dto.description());
             var savedTask = this.service.create(newTask);
-            return ResponseEntity.created(URI.create("/tasks/" + savedTask.getId())).body(savedTask);
+
+            var response = new ResponseTaskDTO(
+                    savedTask.getId(),
+                    savedTask.getDescription(),
+                    savedTask.isFinished()
+            );
+
+            return ResponseEntity
+                    .created(URI.create("/tasks/" + savedTask.getId()))
+                    .body(response);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<Task> listById(@PathVariable Long id) {
+    ResponseEntity<ResponseTaskDTO> listById(@PathVariable Long id) {
         try {
             var selectedTask = this.service.listById(id);
-            return ResponseEntity.ok(selectedTask);
+
+            var response = new ResponseTaskDTO(
+                    selectedTask.getId(),
+                    selectedTask.getDescription(),
+                    selectedTask.isFinished()
+            );
+
+            return ResponseEntity.ok(response);
         } catch(NoSuchElementException err) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping
-    List<Task> list() {
-        return this.service.list();
+    ResponseEntity<List<ResponseTaskDTO>> list() {
+        var tasks = this.service.list();
+
+        var response = tasks.stream()
+                .map(task -> new ResponseTaskDTO(
+                        task.getId(),
+                        task.getDescription(),
+                        task.isFinished()
+                ))
+                .toList();
+
+        return ResponseEntity.ok().body(response);
     }
 
     @PatchMapping("/{id}")
-    ResponseEntity<Task> update(@PathVariable Long id, @RequestBody @Valid Task updatedTask) {
+    ResponseEntity<ResponseTaskDTO> update(@PathVariable Long id, @RequestBody @Valid UpdateTaskDTO dto) {
         try {
-            var savedTask = this.service.update(id, updatedTask);
-            return ResponseEntity.ok(savedTask);
+            var savedTask = this.service.update(id, dto);
+
+            var response = new ResponseTaskDTO(
+                    savedTask.getId(),
+                    savedTask.getDescription(),
+                    savedTask.isFinished()
+            );
+
+            return ResponseEntity.ok(response);
         } catch (NoSuchElementException err) {
             return ResponseEntity.notFound().build();
         }
@@ -53,9 +90,8 @@ public class TaskController {
     @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
-            this.service.listById(id);
             this.service.delete(id);
-           return ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build();
         } catch (NoSuchElementException err) {
             return ResponseEntity.notFound().build();
         }

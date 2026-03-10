@@ -1,4 +1,5 @@
 package com.thallesgarbelotti.todo_list.service;
+import com.thallesgarbelotti.todo_list.dto.UpdateTaskDTO;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -28,18 +29,21 @@ public class TaskService {
         return this.repository.findById(id).get();
     }
 
-    public Task update(Long id, @NonNull Task task) {
+    public Task update(Long id, @NonNull UpdateTaskDTO dto) {
         Task selectedTask = this.listById(id);
+        selectedTask.setDescription(dto.description());
 
-        String newDescription = task.getDescription();
+        if (dto.finished()) {
+            selectedTask.markAsFinished();
+        } else {
+            selectedTask.markAsPending();
+        }
 
-        selectedTask.setDescription(newDescription);
-
-        this.repository.save(selectedTask);
-        return selectedTask;
+        return this.repository.save(selectedTask);
     }
 
     public void delete(Long id) {
+        this.listById(id);
         this.repository.deleteById(id);
     }
 }
