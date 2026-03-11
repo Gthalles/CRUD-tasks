@@ -1,123 +1,72 @@
-# 🚀 Todo List API — Spring Boot + MySQL + Docker
+# Todo List API
 
-CRUD simples para praticar Java + Spring Boot + JPA + MySQL rodando no Docker.
+Simple REST API for creating, updating, listing and deleting tasks. Built with Spring Boot, JPA and MySQL; automated tests run on an in-memory H2 database.
 
-README.md gerado por IA para documentação prática do aprendizado.
+## Features
+- CRUD for tasks (`description`, `finished`).
+- Validation with Jakarta Bean Validation and explicit business rules in the entity.
+- Global error handling for validation errors, bad input and missing records.
+- OpenAPI docs via springdoc (`/swagger-ui.html`).
+- Test profile that runs against H2; default runtime profile uses MySQL.
 
----
-
-## 🧱 Stack
-
+## Tech Stack
 - Java 17
-- Spring Boot
-- Spring Data JPA
-- MySQL 8.4 (Docker)
-- Maven
+- Spring Boot 3.3.5 (Web, Data JPA, Validation)
+- MySQL 8.4 (default), H2 (tests)
+- Maven Wrapper
 
----
+## Requirements
+- JDK 17+
+- Maven 3.9+ (or use the provided `./mvnw`)
+- Docker (optional, for local MySQL)
 
-## 📦 Entidade
+## Quick Start (MySQL default)
+1. Start MySQL (Docker): `docker compose up -d mysql`
+2. Check credentials in [`src/main/resources/application.yaml`](/Users/thallesgarbelotti/Desktop/todo-list/src/main/resources/application.yaml).
+3. Run the app: `./mvnw spring-boot:run`
+4. API base URL: `http://localhost:8080`
+5. Swagger UI: `http://localhost:8080/swagger-ui.html` (spec at `/v3/api-docs`)
 
-Task {
-Long id
-String description
-boolean finished
-}
+### Running with H2 (tests or local without MySQL)
+- Use the `test` profile: `SPRING_PROFILES_ACTIVE=test ./mvnw spring-boot:run`
+- Profile config: [`src/test/resources/application-test.yaml`](/Users/thallesgarbelotti/Desktop/todo-list/src/test/resources/application-test.yaml).
 
-Tabela: tasks
+## Configuration
+Key settings (default `application.yaml`):
+- `spring.datasource.url`: `jdbc:mysql://localhost:3306/todo_db`
+- `spring.datasource.username`: `todo_user`
+- `spring.datasource.password`: `todo_pass`
+- `spring.jpa.hibernate.ddl-auto`: `update`
 
----
+Docker MySQL credentials (from `docker-compose.yaml`):
+- DB: `todo_db`
+- User/password: `todo_user` / `todo_pass`
+- Root password: `root_pass`
 
-# 🐳 Subindo o MySQL no Docker
+## API
+Endpoints use JSON.
 
-Arquivo docker-compose.yml:
+- GET `/tasks` – list all tasks.
+- GET `/tasks/{id}` – get a single task.
+- POST `/tasks` – create. Body: `{"description":"Write docs","finished":false}` (only `description` is required).
+- PATCH `/tasks/{id}` – update description and/or finished flag. Body: `{"description":"Reviewed docs","finished":true}`.
+- DELETE `/tasks/{id}` – delete a task.
 
-Subir banco:
-
-docker compose up -d
-
----
-
-# ▶️ Rodando a aplicação
-
-./mvnw spring-boot:run
-
-ou
-
-mvn spring-boot:run
-
-Servidor sobe em:
-
-http://localhost:8080
-
----
-
-# 📌 Endpoints
-
-Base URL:
-
-/tasks
-
----
-
-## ✅ Criar Task
-
+Example (create):
+```bash
 curl -X POST http://localhost:8080/tasks \
--H "Content-Type: application/json" \
--d '{"description": "Create endpoint GET /issues/:id", "finished": false}'
+  -H "Content-Type: application/json" \
+  -d '{"description":"Write README","finished":false}'
+```
 
----
+## Tests
+- Unit, controller, service and integration suites: `./mvnw test`
+- Tests run with profile `test` against H2; database is created and dropped automatically.
 
-## 📄 Listar todas
+## Project Layout
+- [`src/main/java/com/thallesgarbelotti/todo_list`](/Users/thallesgarbelotti/Desktop/todo-list/src/main/java/com/thallesgarbelotti/todo_list) – application code (entity, repository, service, controller, exception handler).
+- [`src/test/java/com/thallesgarbelotti/todo_list`](/Users/thallesgarbelotti/Desktop/todo-list/src/test/java/com/thallesgarbelotti/todo_list) – unit and integration tests.
+- [`docker-compose.yaml`](/Users/thallesgarbelotti/Desktop/todo-list/docker-compose.yaml) – MySQL for local dev.
 
-curl -X GET http://localhost:8080/tasks -v | python3 -m json.tool
-
----
-
-## 🔎 Buscar por ID
-
-curl -X GET http://localhost:8080/tasks/1 -v | python3 -m json.tool
-
----
-
-## 🔄 Atualizar (PATCH)
-
-curl -X PATCH http://localhost:8080/tasks/1 \
--H "Content-Type: application/json" \
--d '{"description": "Endpoint PATCH /tasks/:id", "finished": true}' \
--v | python3 -m json.tool
-
----
-
-## ❌ Deletar
-
-curl -X DELETE http://localhost:8080/tasks/2 \
--v | python3 -m json.tool
-
----
-
-# 🗂 Estrutura
-
-entity/
-service/
-controller/
-repository/
-
-Arquitetura:
-
-Controller → Service → Repository → MySQL
-
----
-
-# 🎯 Objetivo do Projeto
-
-Praticar:
-
-- JPA
-- Tipos primitivos do Java
-- Spring e Springboot
-- Injeção de dependência
-- Docker com banco relacional
-- CRUD REST
-
----
+## Logging & Debug
+- SQL logging is enabled (`org.hibernate.SQL=DEBUG`). Uncomment `org.hibernate.orm.jdbc.bind` in `application.yaml` to inspect parameter binding when needed.

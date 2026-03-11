@@ -1,4 +1,4 @@
-package com.thallesgarbelotti.todo_list.exception;
+package com.thallesgarbelotti.task.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

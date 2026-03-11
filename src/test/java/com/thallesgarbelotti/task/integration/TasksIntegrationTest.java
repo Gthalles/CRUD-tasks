@@ -1,15 +1,15 @@
-package com.thallesgarbelotti.todo_list.integration;
+package com.thallesgarbelotti.task.integration;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import com.thallesgarbelotti.todo_list.entity.Task;
+import com.thallesgarbelotti.task.entity.Task;
 import org.springframework.test.context.ActiveProfiles;
-import com.thallesgarbelotti.todo_list.dto.CreateTaskDTO;
-import com.thallesgarbelotti.todo_list.dto.ResponseTaskDTO;
+import com.thallesgarbelotti.task.dto.CreateTaskDTO;
+import com.thallesgarbelotti.task.dto.ResponseTaskDTO;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.thallesgarbelotti.todo_list.repository.TaskRepository;
+import com.thallesgarbelotti.task.repository.TaskRepository;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
 

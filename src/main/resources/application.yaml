@@ -25,5 +25,12 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
-    # deixe esse só quando precisar ver bind de parâmetros:
+    # Uncomment for SQL parameter binding
     # org.hibernate.orm.jdbc.bind: trace
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

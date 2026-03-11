@@ -1,4 +1,4 @@
-package com.thallesgarbelotti.todo_list.dto;
+package com.thallesgarbelotti.task.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

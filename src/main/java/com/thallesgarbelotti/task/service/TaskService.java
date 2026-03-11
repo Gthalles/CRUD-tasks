@@ -1,9 +1,9 @@
-package com.thallesgarbelotti.todo_list.service;
-import com.thallesgarbelotti.todo_list.dto.UpdateTaskDTO;
+package com.thallesgarbelotti.task.service;
+import com.thallesgarbelotti.task.dto.UpdateTaskDTO;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import com.thallesgarbelotti.todo_list.entity.Task;
-import com.thallesgarbelotti.todo_list.repository.TaskRepository;
+import com.thallesgarbelotti.task.entity.Task;
+import com.thallesgarbelotti.task.repository.TaskRepository;
 
 import java.util.List;
 

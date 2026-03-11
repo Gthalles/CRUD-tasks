@@ -1,4 +1,4 @@
-package com.thallesgarbelotti.todo_list.dto;
+package com.thallesgarbelotti.task.dto;
 
 public record ResponseTaskDTO(
         Long id,

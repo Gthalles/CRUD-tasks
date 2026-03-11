@@ -1,4 +1,4 @@
-package com.thallesgarbelotti.todo_list.entity;
+package com.thallesgarbelotti.task.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

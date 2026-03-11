@@ -1,8 +1,8 @@
-package com.thallesgarbelotti.todo_list.service;
+package com.thallesgarbelotti.task.service;
 
-import com.thallesgarbelotti.todo_list.entity.Task;
-import com.thallesgarbelotti.todo_list.repository.TaskRepository;
-import com.thallesgarbelotti.todo_list.dto.UpdateTaskDTO;
+import com.thallesgarbelotti.task.entity.Task;
+import com.thallesgarbelotti.task.repository.TaskRepository;
+import com.thallesgarbelotti.task.dto.UpdateTaskDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

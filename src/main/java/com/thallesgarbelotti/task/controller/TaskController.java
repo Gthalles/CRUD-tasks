@@ -1,13 +1,13 @@
-package com.thallesgarbelotti.todo_list.controller;
+package com.thallesgarbelotti.task.controller;
 
-import com.thallesgarbelotti.todo_list.dto.CreateTaskDTO;
-import com.thallesgarbelotti.todo_list.dto.ResponseTaskDTO;
-import com.thallesgarbelotti.todo_list.dto.UpdateTaskDTO;
+import com.thallesgarbelotti.task.dto.CreateTaskDTO;
+import com.thallesgarbelotti.task.dto.ResponseTaskDTO;
+import com.thallesgarbelotti.task.dto.UpdateTaskDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.thallesgarbelotti.todo_list.entity.Task;
-import com.thallesgarbelotti.todo_list.service.TaskService;
+import com.thallesgarbelotti.task.entity.Task;
+import com.thallesgarbelotti.task.service.TaskService;
 
 import java.net.URI;
 import java.util.List;
