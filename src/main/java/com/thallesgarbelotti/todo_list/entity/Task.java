@@ -20,8 +20,10 @@ public class Task {
     protected Task() {}
 
     public Task(String description) {
-        setDescription(description);
         this.finished = false;
+        this.description = description;
+
+        this.validate();
     }
 
     public Long getId() {
@@ -29,11 +31,8 @@ public class Task {
     }
 
     public void setDescription(String description) {
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("Description cannot be blank");
-        }
-
         this.description = description;
+        this.validate();
     }
 
     public String getDescription() {
@@ -50,5 +49,11 @@ public class Task {
 
     public boolean isFinished() {
         return this.finished;
+    }
+
+    private void validate() {
+        if (description == null || description.isBlank()) {
+            throw new IllegalArgumentException("Description cannot be blank");
+        }
     }
 }
