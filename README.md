@@ -1,72 +1,108 @@
 # Task API
 
-Simple REST API for creating, updating, listing and deleting tasks. Built with Spring Boot, JPA and MySQL; automated tests run on an in-memory H2 database.
+Simple REST API for creating, updating, listing and deleting tasks. Built with Spring Boot + JPA. Default runtime uses MySQL; tests use an in-memory H2 database.
 
 ## Features
 - CRUD for tasks (`description`, `finished`).
-- Validation with Jakarta Bean Validation and explicit business rules in the entity.
+- Validation with Jakarta Bean Validation (DTO) and explicit business rules in the entity.
 - Global error handling for validation errors, bad input and missing records.
-- OpenAPI docs via springdoc (`/swagger-ui.html`).
-- Test profile that runs against H2; default runtime profile uses MySQL.
+- OpenAPI docs via springdoc (Swagger UI at `/swagger-ui.html`).
+- `test` profile using H2 (useful for running locally without MySQL as well).
 
 ## Tech Stack
 - Java 17
-- Spring Boot 3.3.5 (Web, Data JPA, Validation)
-- MySQL 8.4 (default), H2 (tests)
-- Maven Wrapper
+- Spring Boot 3.3.5
+- springdoc-openapi (Swagger UI)
+- MySQL 8.4 (default), H2 (test profile)
+- Maven Wrapper (`./mvnw`)
 
 ## Requirements
 - JDK 17+
-- Maven 3.9+ (or use the provided `./mvnw`)
 - Docker (optional, for local MySQL)
 
-## Quick Start (MySQL default)
-1. Start MySQL (Docker): `docker compose up -d mysql`
-2. Check credentials in [`src/main/resources/application.yaml`](/Users/thallesgarbelotti/Desktop/todo-list/src/main/resources/application.yaml).
-3. Run the app: `./mvnw spring-boot:run`
-4. API base URL: `http://localhost:8080`
-5. Swagger UI: `http://localhost:8080/swagger-ui.html` (spec at `/v3/api-docs`)
+## Getting Started
 
-### Running with H2 (tests or local without MySQL)
-- Use the `test` profile: `SPRING_PROFILES_ACTIVE=test ./mvnw spring-boot:run`
-- Profile config: [`src/test/resources/application-test.yaml`](/Users/thallesgarbelotti/Desktop/todo-list/src/test/resources/application-test.yaml).
+### Run with MySQL (default)
+1. Start MySQL with Docker Compose:
+   - `docker compose up -d mysql`
+   - Compose file: [`docker-compose.yaml`](docker-compose.yaml)
+2. Check DB config:
+   - MySQL runtime config: [`src/main/resources/application.yaml`](src/main/resources/application.yaml)
+3. Run the app:
+   - `./mvnw spring-boot:run`
+4. Base URL:
+   - `http://localhost:8080`
+5. Swagger UI:
+   - `http://localhost:8080/swagger-ui.html` (OpenAPI JSON at `http://localhost:8080/v3/api-docs`)
 
-## Configuration
-Key settings (default `application.yaml`):
-- `spring.datasource.url`: `jdbc:mysql://localhost:3306/task_db`
-- `spring.datasource.username`: `task_user`
-- `spring.datasource.password`: `task_pass`
-- `spring.jpa.hibernate.ddl-auto`: `update`
-
-Docker MySQL credentials (from `docker-compose.yaml`):
-- DB: `task_db`
-- User/password: `task_user` / `task_pass`
-- Root password: `root_pass`
-
-## API
-Endpoints use JSON.
-
-- GET `/tasks` – list all tasks.
-- GET `/tasks/{id}` – get a single task.
-- POST `/tasks` – create. Body: `{"description":"Write docs","finished":false}` (only `description` is required).
-- PATCH `/tasks/{id}` – update description and/or finished flag. Body: `{"description":"Reviewed docs","finished":true}`.
-- DELETE `/tasks/{id}` – delete a task.
-
-Example (create):
+### Run with H2 (no MySQL)
+Run the application with the `test` profile:
 ```bash
-curl -X POST http://localhost:8080/tasks \
-  -H "Content-Type: application/json" \
-  -d '{"description":"Write README","finished":false}'
+SPRING_PROFILES_ACTIVE=test ./mvnw spring-boot:run
 ```
 
+Profile config:
+- [`src/test/resources/application-test.yaml`](src/test/resources/application-test.yaml)
+
+## Configuration
+
+### MySQL (default)
+See [`src/main/resources/application.yaml`](src/main/resources/application.yaml):
+- `spring.datasource.url`
+- `spring.datasource.username`
+- `spring.datasource.password`
+- `spring.jpa.hibernate.ddl-auto`
+
+### Docker Compose MySQL
+From [`docker-compose.yaml`](docker-compose.yaml):
+- DB: `task_db`
+- User/password: `task_user` / `task_pass`
+- Root password: `task_pass`
+
+## API
+Endpoints use JSON and are available under `/tasks`:
+- GET `/tasks` list all tasks (sorted by description).
+- GET `/tasks/{id}` get a single task.
+- POST `/tasks` create a task.
+- PATCH `/tasks/{id}` update a task.
+- DELETE `/tasks/{id}` delete a task.
+
+### Payloads
+Create (`POST /tasks`):
+```json
+{ "description": "Write README" }
+```
+
+Update (`PATCH /tasks/{id}`):
+```json
+{ "description": "Reviewed docs", "finished": true }
+```
+
+Note: the current implementation expects both `description` and `finished` on update (see controller/service at
+[`src/main/java/com/thallesgarbelotti/task/controller/TaskController.java`](src/main/java/com/thallesgarbelotti/task/controller/TaskController.java) and
+[`src/main/java/com/thallesgarbelotti/task/service/TaskService.java`](src/main/java/com/thallesgarbelotti/task/service/TaskService.java)).
+
+### cURL examples
+There is a dedicated file with ready-to-run commands:
+- [`curl.md`](curl.md)
+
 ## Tests
-- Unit, controller, service and integration suites: `./mvnw test`
-- Tests run with profile `test` against H2; database is created and dropped automatically.
+Run tests:
+```bash
+./mvnw test
+```
+
+Tests use the `test` profile (H2) configured in
+[`src/test/resources/application-test.yaml`](src/test/resources/application-test.yaml).
 
 ## Project Layout
-- [`src/main/java/com/thallesgarbelotti/task`](/Users/thallesgarbelotti/Desktop/todo-list/src/main/java/com/thallesgarbelotti/task) – application code (entity, repository, service, controller, exception handler).
-- [`src/test/java/com/thallesgarbelotti/task`](/Users/thallesgarbelotti/Desktop/todo-list/src/test/java/com/thallesgarbelotti/task) – unit and integration tests.
-- [`docker-compose.yaml`](/Users/thallesgarbelotti/Desktop/todo-list/docker-compose.yaml) – MySQL for local dev.
+- Application code: [`src/main/java/com/thallesgarbelotti/task`](src/main/java/com/thallesgarbelotti/task)
+- Runtime config: [`src/main/resources/application.yaml`](src/main/resources/application.yaml)
+- Tests: [`src/test/java/com/thallesgarbelotti/task`](src/test/java/com/thallesgarbelotti/task)
+- Test profile config: [`src/test/resources/application-test.yaml`](src/test/resources/application-test.yaml)
+- Local MySQL: [`docker-compose.yaml`](docker-compose.yaml)
 
 ## Logging & Debug
-- SQL logging is enabled (`org.hibernate.SQL=DEBUG`). Uncomment `org.hibernate.orm.jdbc.bind` in `application.yaml` to inspect parameter binding when needed.
+SQL logging is enabled (see `logging.level.org.hibernate.SQL` in
+[`src/main/resources/application.yaml`](src/main/resources/application.yaml)). Uncomment
+`org.hibernate.orm.jdbc.bind` to inspect parameter binding when needed.
